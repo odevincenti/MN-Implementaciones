@@ -105,3 +105,21 @@ def gaussian_triangulation(A):
 
 
 
+def desc_qrfier(A):
+    m = A.shape[0]                                         # Defino las dimensiones m y n
+    n = A.shape[1]
+
+    Q = np.zeros(shape=(m, n))                             # Creo las matrices base
+    R = np.zeros(shape=(n, n))
+
+    R[1, 1] = np.linalg.norm(A[:, 1])
+    Q[:, 1] = A[:, 1] / R[1, 1]
+    for i in range(1, n):
+        Q[:, i] = A[:, i]
+        for j in range(i-1):
+            R[j, i] = np.dot(np.transpose(Q[:, j]), A[:, i])
+            Q[:, i] = Q[:, i] - R[j, i]*Q[:, j]
+        R[i, i] = np.linalg.norm(A[:, i])
+        Q[:, i] = Q[:, i]/R[i, i]
+    return Q, R
+
