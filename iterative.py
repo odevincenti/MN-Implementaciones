@@ -102,12 +102,21 @@ def secante(x_2, x_1, f, tol=np.finfo(float).eps, max_i=100):
 
 ########################################################################################################################
 # xi: Arreglo de callbacks que reciben la iteracion actual y la anterior y devuelven el valor de las variables
-def gauss_seidel(xi, xo, n):
-    x = np.zeros((n, len(xo)))
-    x[0] = xo
+def gauss_seidel(A, b,n=100, tol=np.finfo(float).eps):
+    x=np.zeros(len(b))
     for k in range(n):
-        for j in range(len(xo)):
-            x[k][j] = xi[j](x[k], x[k - 1])
+        x0=np.array(x)
+        print(x0)
+        for i in range(len(x)):
+            sum = 0
+            for j in range(len(x)):
+                if(j != i ):
+                    sum += A[i, j] * x[j]
+            x[i] = (b[i]-sum) / A[i, i]
+        print(f"Iteracion:",k,"/vector", x)
+        if (np.linalg.norm(x-x0) <= tol):
+            break
+
 
     return x
 
@@ -139,11 +148,19 @@ def sor(xi, xo, n, w):
 ########################################################################################################################
 # épsilon de máquina: np.finfo(float).eps
 
-print("\nBisección")
-print(bisec(0, 1, lambda x: x - np.cos(x), max_i=100))
-print("\nPunto Fijo")
-print(punto_fijo(0.5, lambda x: np.cos(x), max_i=100))
-print("\nNewton-Raphson")
-print(newton_raphson(1, lambda x: x - np.cos(x), lambda x: 1 + np.sin(x), max_i=100))
-print("\nSecante")
-print(secante(0, 1, lambda x: x - np.cos(x), max_i=100))
+# print("\nBisección")
+# print(bisec(0, 1, lambda x: x - np.cos(x), max_i=100))
+# print("\nPunto Fijo")
+# print(punto_fijo(0.5, lambda x: np.cos(x), max_i=100))
+# print("\nNewton-Raphson")
+# print(newton_raphson(1, lambda x: x - np.cos(x), lambda x: 1 + np.sin(x), max_i=100))
+# print("\nSecante")
+# print(secante(0, 1, lambda x: x - np.cos(x), max_i=100))
+
+
+A= np.array([[5, 2, -1],
+             [1, -5, -2],
+              [1, -1, 3]])
+b = np.array([4,4,4])
+
+print(gauss_seidel(A,b))
