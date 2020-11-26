@@ -149,6 +149,48 @@ def cauchy(f, x0, t0, tf, h):
 
 
 ########################################################################################################################
+# Implementación de ruku4
+#
+#
+# ----------------------------------------------------------------------------------------------------------------------
+def ruku4(f, t0, tf, h, x0):
+  ts = np.arange(t0, tf + h, h)
+  x = np.zeros((len(ts), len(x0)))
+  x[0] = x0
+  fvec = np.zeros((4, len(x0)))
+  for i, t in enumerate(ts[:-1]):
+    fvec[0] = f(t, x[i])
+    fvec[1] = f(t + h / 2, x[i] + h * fvec[0] / 2)
+    fvec[2] = f(t + h / 2, x[i] + h * fvec[1] / 2)
+    fvec[3] = f(t + h, x[i] + h * fvec[2])
+    x[i + 1] = x[i] + h * (np.dot(np.array([1, 2, 2, 1]), fvec) / 6)
+  return ts, x
+########################################################################################################################
+
+def f(t, x):
+    return np.array([1 - 2*(x[1]**4-1)*x[0] - x[1], x[0]])
+
+
+ci = np.array([1.5, 1])
+t0 = 0
+tf = 75
+h = 0.1
+t, x = ruku4(f, t0, tf, h, ci)
+
+plt.plot(t, x[:, 0])
+plt.title("Función")
+plt.ylabel("x")
+plt.xlabel("t")
+plt.show()
+
+plt.plot(t, x[:, 1])
+plt.title("Derivada")
+plt.ylabel("x")
+plt.xlabel("t")
+plt.show()
+
+
+########################################################################################################################
 # Implementación genérica de Euler explícito
 # f(t,x): derivada de x respecto al tiempo
 # j(t,x): jacobiano de f(t,x) respecto a x
@@ -178,24 +220,4 @@ def euleri(f, jf, x0, t0, tf, h):
 ########################################################################################################################
 
 
-########################
-# EJEMPLO
-########################
-R = 1e3	            #Valor de la resistencia
-C = 1e-6	        #Valor de la capacidad
-w = 2.0*np.pi*1000     #frecuencia angular de la señal de entrada
-A = 1.0		        #amplitud de la señal de entrada
-T = 5*2*np.pi/w	    #simulo cinco ciclos
-
-
-def f(t, x):
-    return (-21*x + np.e**(-t))
-
-def j(t, x):
-    return -21
-
-t, y = euleri(f, j, np.array([0]), 0, 5, 0.1)
-print(t, y)
-plt.plot(t, y[0, :])
-plt.show()
 
