@@ -5,6 +5,19 @@
 import numpy as np
 
 ########################################################################################################################
+# leastdvs:
+# Resuelve el problema de cuadrados mínimos usando descomposición por valores singulares
+# ----------------------------------------------------------------------------------------------------------------------
+def leastdvs(A, b):
+    vs, V, U = dvs(A)
+    x = 0
+    for i in range(len(vs)):
+        x += ((U[:, i])@b)*(V[:, i]/vs[i])
+    return x
+########################################################################################################################
+
+
+########################################################################################################################
 # dvs:
 # Descompones la matriz A y encuentra sus valores singulares
 # ----------------------------------------------------------------------------------------------------------------------
@@ -15,60 +28,20 @@ def dvs(A):
     lista.sort(key=lambda tup: tup[0], reverse=True)
     vs = []
     V = []
-    for i in range((min(A.shape[0], A.shape[1]))):
-        if lista[i][0] < 0:                                 # Filtro avas negativos
-            pass
-        else:
-            vs.append(np.sqrt(lista[i][0]))                 # Calculo valores singulares
-            V.append(normalize(lista[i][1]))                # Normalizo aves
+    U = []
+    i = 0
+    while i < min(A.shape[0], A.shape[1]) and lista[i][0] > 0:      # Filtro avas negativos
+        vs.append(np.sqrt(lista[i][0]))                             # Calculo valores singulares
+        V.append(normalize(lista[i][1]))                            # Normalizo aves
+        U.append(normalize(np.dot(A, V[i]/vs[i])))                  # Calculo las primeras columnas de U
+        i += 1
 
     vs = np.array(vs)
-    V = np.array(V)
+    V = np.transpose(np.array(V))
+    U = np.transpose(np.array(U))
+    # S = np.diag(vs)
 
-    U = np.zeros((A.shape[0], A.shape[0]))
-    for i in range(len(V)):
-        U[i] = normalize(np.dot(A, V[i])/vs[i])           #ERA AVAS O SIGMAS?
-    for j in range(len(V), len(U)):
-        R = np.random.rand(A.shape[0])
-        p = R
-        for k in range(j):
-            # u0 = U[k]
-            # aux1 = np.dot(R, u0)
-            # aux2 = np.linalg.norm(U[k])
-            # aux3 = aux1/aux2
-            # aux4 = np.dot(aux3, U[k])
-            # p = p - aux4
-            p = p - np.dot((np.dot(R, U[k]) / np.dot(U[k].T, U[k])), U[k])     # Busco vectores ortonormales para agregar a U
-        U[j] = normalize(p)
-
-
-    print("vs", vs)
-    print("V", V)
-    print("U", U.T)
-    print("CERO", np.dot(U[0], U[1])) #, np.dot(U[0], U[2]), np.dot(U[2], U[1]))
-    print("UNO", np.linalg.norm(U[0]), np.linalg.norm(U[1])) #, np.linalg.norm(U[2]))
-
-    return
-########################################################################################################################
-
-
-########################################################################################################################
-# gaussian_triangulation:
-# Triangula la matriz dada usando el método de Gauss
-# ----------------------------------------------------------------------------------------------------------------------
-def gaussian_triangulation(A):
-    T = np.array(A, float)
-    for k in range(len(T)):                                     # k: numero de paso de la eliminación
-        for i in range(k + 1, len(T)):                          # i: fila que se esta eliminando
-            if T[k][k] != 0:                                    # Reviso que el pivote no sea cero
-                m = T[i][k] / T[k][k]
-                T[i] = T[i] - m * T[k]
-            else:                                               # Si el pivote era cero:
-                for j in range(k + 1, len(T)):
-                    if T[j][k] != 0:                            # Busco una fila con esa columna != 0
-                        T[[k, j]] = T[[j, k]]                   # Intercambio filas
-                        break
-    return T
+    return vs, V, U
 ########################################################################################################################
 
 
@@ -83,23 +56,17 @@ def normalize(v):
 ########################################################################################################################
 
 
-########################################################################################################################
-# det:
-# Calcula el determinante de una matriz de nxn usando el método de eliminación de Gauss y multiplicando los valores de
-# su diagonal
-# ----------------------------------------------------------------------------------------------------------------------
-def det(A):
-    A = gaussian_triangulation(A)
-    d = 1
-    for i in range(len(A)):
-        d = d * A[i][i]
-    return d
-########################################################################################################################
+A = np.array([[1.02, 1], [1.01, 1], [0.94, 1], [0.99, 1]])
+b = np.array([2.05, 1.99, 2.02, 1.93])
 
-A = np.array([[1, 0, 0, 0], [1, 0, 0, 1]])
-b = np.array([[1], [2], [3]])
+# print(np.dot(A.T, A))
+# print(np.linalg.eig(np.dot(A.T, A))[0])
+# print(np.linalg.eig(np.dot(A.T, A))[1])
 
-dvs(A)
+
+# print(dvs(A))
+print("Lo que da:", leastdvs(A, b))
+print("Lo que debería dar:", np.linalg.lstsq(A, b, None)[0])
 
 # vs = np.array([0, 1, 2, -3, 4, -5, -6, 7, 8])
 # vsp = []
