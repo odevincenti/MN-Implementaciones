@@ -43,8 +43,8 @@ def solve_trig(A, b):
         print("La matriz ingresada no es cuadrada o no son compatibles las dimensiones de A y b")
         return "ERROR"
 
-
-    b = np.atleast_2d(b).T          # convierto b a forma de vector vertical
+    if len(b.shape) < 2:
+        b = np.atleast_2d(b).T  # para convertir vectores 1-D de n a 2-d de nx1
 
     n = b.shape[0]
     x = np.zeros((n, 1))
@@ -82,9 +82,9 @@ def leastsq(A, b):
     x = solve_trig(np.transpose(G), y)              # Gt.x = y
     return x
 ########################################################################################################################
-A=np.array( [[1,3],
-            [2,4],
-             [8,9]])
+A=np.array( [[1,3,6],
+            [2,4,7],
+             [8,9,56]])
 
 
 b=np.array([1,2,10])
