@@ -1,5 +1,5 @@
 import numpy as np
-
+#Cuando w=1 es el metodo de Gauss seidel, W debe estar siempre entre 0 y 2
 def sorCuadrada(A,b,maxiter=100,tol=np.finfo(float).eps,w=1):
     n=np.size(b)
     x=np.ones(n)
