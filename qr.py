@@ -15,7 +15,7 @@ import numpy as np
 def leastsqr(A, b):
 
     # Factorización QR
-    QR = desc_qr(A)                                     # Realizo la descomposición QR
+    QR = desc_qrfier(A)                                     # Realizo la descomposición QR
     Q1 = QR[0]                                          # Recupero Q1 de m*n y ortonormal de A
     R1 = QR[1]                                          # Recupero R1 triangular superior de n*n
 
@@ -104,7 +104,11 @@ def gaussian_triangulation(A):
 
 
 
-
+########################################################################################################################
+# desc_qr:
+# Realiza la descomposición QR reducida usando Gram-Schmidt. Devuelve Q1 y R1
+# Asume que se cumplen los requisitos de leastsqr
+# ----------------------------------------------------------------------------------------------------------------------
 def desc_qrfier(A):
     m = A.shape[0]                                         # Defino las dimensiones m y n
     n = A.shape[1]
@@ -112,14 +116,23 @@ def desc_qrfier(A):
     Q = np.zeros(shape=(m, n))                             # Creo las matrices base
     R = np.zeros(shape=(n, n))
 
-    R[1, 1] = np.linalg.norm(A[:, 1])
-    Q[:, 1] = A[:, 1] / R[1, 1]
+    R[0, 0] = np.linalg.norm(A[:, 0])                       #primero calculo R(0,0)
+    Q[:, 0] = A[:, 0] / R[0, 0]                             #usando el valor encontrado calculo Q0
     for i in range(1, n):
         Q[:, i] = A[:, i]
         for j in range(i-1):
             R[j, i] = np.dot(np.transpose(Q[:, j]), A[:, i])
-            Q[:, i] = Q[:, i] - R[j, i]*Q[:, j]
-        R[i, i] = np.linalg.norm(A[:, i])
+            Q[:, i] = Q[:, i] - R[j, i]*Q[:, j]             #calculo el resto de valores de R
+        R[i, i] = np.linalg.norm(A[:, i])                   #y las uso para calcular las filas de Q
         Q[:, i] = Q[:, i]/R[i, i]
     return Q, R
 
+A = np.array([[1, 3, 6],
+              [2, 4, 7],
+              [8, 9, 56]])
+
+
+b = np.array([1, 2, 10])
+
+print(np.linalg.lstsq(A, b))
+print(leastsqr(A, b))
