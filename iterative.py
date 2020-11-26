@@ -101,18 +101,18 @@ def secante(x_2, x_1, f, tol=np.finfo(float).eps, max_i=100):
 
 
 ########################################################################################################################
+#Si queres jacobi cambia x por x0 en la sumatoria
 # xi: Arreglo de callbacks que reciben la iteracion actual y la anterior y devuelven el valor de las variables
 def gauss_seidel(A, b,n=100, tol=np.finfo(float).eps):
     x=np.zeros(len(b))
     for k in range(n):
-        x0=np.array(x)
-        print(x0)
+        x0=np.array(x)                     #importante poner np.array, sino referencian ambas variables al mismo arreglo
         for i in range(len(x)):
             sum = 0
-            for j in range(len(x)):
-                if(j != i ):
+            for j in range(len(x)):         #Cuando i < j los valores ya son los de la iteracion actual, en caso
+                if(j != i ):                #contrario son las de la iteracion pasada
                     sum += A[i, j] * x[j]
-            x[i] = (b[i]-sum) / A[i, i]
+            x[i] = (b[i]-sum) / A[i, i]     #Formula gauss seidel
         print(f"Iteracion:",k,"/vector", x)
         if (np.linalg.norm(x-x0) <= tol):
             break

@@ -1,6 +1,6 @@
 import numpy as np
 
-def sorCuadrada(A,b,maxiter,tol=np.finfo(float).eps,w=1):
+def sorCuadrada(A,b,maxiter=100,tol=np.finfo(float).eps,w=1):
     n=np.size(b)
     x=np.ones(n)
     for k in range(maxiter):
