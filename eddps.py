@@ -38,7 +38,7 @@ def wave(k, nro_hx, nro_ht, u0, u0t, uNt, hx, ht):
     return u
 # ----------------------------------------------------------------------------------------------------------------------
 # EJEMPLO DE USO
-k = 4                       # Cte de la ecuacion de onda
+'''k = 4                       # Cte de la ecuacion de onda
 hx = 0.2                    # Paso en x
 ht = 0.1                    # Paso en t
 N = 5                       # Cantidad de pasos en x
@@ -53,12 +53,54 @@ uNt = 0
 
 u = wave(k, N, M, u0, u0t, uNt, hx, ht)
 print(f"Matriz solucion:")
-print(np.round(u, 3))
+print(np.round(u, 3))'''
 ########################################################################################################################
 
 
+########################################################################################################################
+# Ecuación del calor: u_t = c*u_xx
+# C: constante de la ecuación de calor
+# r: constante de la grilla = ht/hx^2
+# nro_hx: numero de pasos en x
+# nro_ht: numero de pasos en t
+# u0: vector de N+1 valores con los valores de u(xi, 0)
+# u0t: valor de u(0, t)
+# uNt: valor de u(xN, t)
+# ----------------------------------------------------------------------------------------------------------------------
+def heat(C, r, nro_hx, nro_ht, u0, u0t, uNt):
 
+    # Matriz solución
+    u = np.zeros((nro_hx + 1, nro_ht + 1))
+    u[:, 0] = u0
+    u[0] = u0t
+    u[nro_hx] = uNt
+    # ( a1 a2 a3 ) ( uij     )  = v.T * u
+    #              ( u(i+1)j )
+    #              ( u(i-1)j )
+    v = [1 - 2*r*C, r*C, r*C]
+    for j in range(0, nro_ht):
+        for i in range(1, nro_hx):
+            prev = [u[i, j], u[i+1, j], u[i-1, j]]
+            u[i, j+1] = np.inner(v, prev)
+    return u
+# ----------------------------------------------------------------------------------------------------------------------
+# EJEMPLO DE USO
+'''C = 0.5         # Constante de la ecuacion de calor
+hx = 0.2        # Paso en x
+ht = 0.02       # Paso en t
+N = 5           # Cantidad de pasos en x
+M = 5           # Cantidad de pasos en t
 
+# Condiciones iniciales
+# u(x,0) = 1 - |2x - 1|
+u0 = [1 - np.abs(2*xi - 1) for xi in np.linspace(0, N*hx, N + 1)]
+# u(0,t) = u(1,t) = 0
+u0t = 0
+uNt = 0
+
+u = heat(C, ht/hx**2, N, M, u0, u0t, uNt)
+print(np.round(u, 3))'''
+########################################################################################################################
 
 
 
