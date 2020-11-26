@@ -1,3 +1,5 @@
+import copy
+
 def lu_decomposition(A):
     #"""(I | A) -> (L | A)"""
     m=3                    #Le asigno una valor cuaqluiera para que sea un float
@@ -14,3 +16,4 @@ def lu_decomposition(A):
             L[j][k] = m
         #print(f'Paso {k + 1}:\nL:\n{L}\nU:\n{U}') # comentar si no se quiere ver cada paso de la descomposicion
     return (L, U)
+
