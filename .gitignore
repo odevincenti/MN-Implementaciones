@@ -145,3 +145,5 @@ cython_debug/
 .idea/inspectionProfiles/
 .idea/misc.xml
 .idea/modules.xml
+/.idea/Métodos Numéricos.iml
+/.idea/vcs.xml
