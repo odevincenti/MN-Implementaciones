@@ -85,7 +85,8 @@ def triang_adelante(mat, b):
 
 ########################################################################################################################
 # gaussian_triangulation:
-# Triangula la matriz dada usando el método de Gauss
+# Triangula la matriz dada usando el método de
+#
 # ----------------------------------------------------------------------------------------------------------------------
 def gaussian_triangulation(A):
     T = np.array(A, float)
