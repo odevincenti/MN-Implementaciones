@@ -68,13 +68,12 @@ def newton_raphson(x0, f, fprime, tol=np.finfo(float).eps, max_i=100):
     x1 = x0
     i = 0
     fin = False
-    while not fin:
+    for i in range(max_i):
         x0 = x1
         x1 = x0 - f(x0) / fprime(x0)
-        i += 1
         print(f"Raíz en iteración {i}: x{i} = {x1}")
-        if np.abs(x1 - x0) < tol or i == max_i:
-            fin = True
+        if np.abs(x1 - x0) < tol:
+            break
     return x1
 ########################################################################################################################
 

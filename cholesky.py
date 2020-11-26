@@ -59,7 +59,7 @@ def solve_trig(A, b):
 
     x[0][0] = b[0][0] / A[0, 0]
     for i in range(1, n):
-        x[i][0] = (b[i][0] - A[i][:i] @ x[:i]) / A[i, i]
+        x[i][0] = (b[i][0] - np.dot(A[i][:i],x[:i])) / A[i, i]
     if esInf:
         return x
     return np.flip(x)
@@ -84,84 +84,3 @@ def leastsq(A, b):
     X = solve_trig(np.transpose(G), y)
     return X
 ########################################################################################################################
-
-def test():
-    # Normal
-    A = np.array([[-1, -1], [1, 0], [-1, 1]])
-    b = np.array([[1], [2], [3]])
-    prueba = leastsq(A, b)
-    print('Test 1 (Comparacion con ejercicio hecho en clase)')
-    print('A:\n', A)
-    print('b:\n', b)
-    print('x min (a mano, hecho en clase):')
-    print(np.array([[-2 / 3], [1]]))
-    print('x min (funcion):')
-    print(prueba)
-    print('\n La prueba es exitosa si x min (funcion de Numpy) y x min (funcion nuestra) son iguales\n')
-
-    # Random
-    invalid = True
-    while invalid:
-        A = np.random.randint(-50, 50, (20, 5))
-        b = np.random.randint(-50, 50, (20, 1))
-        avas = np.linalg.eigvals(np.dot(np.transpose(A), A))  # Revisa que AT.A sea definida positiva
-        for i in avas:
-            if abs(i) != i or i <= np.finfo(float).eps:
-                invalid = True
-                print(i)
-                break
-            invalid = False
-
-    prueba = leastsq(A, b)
-    resultadoCompu = np.linalg.lstsq(A, b, rcond=None)[0]
-
-    print('Test 2 (Comparacion con funcion de Cuadrados Minimos de Numpy)')
-    print('A:\n', A)
-    print('b:\n', b)
-    print('x min (funcion de Numpy):')
-    print(resultadoCompu)
-    print('x min (funcion nuestra):')
-    print(prueba)
-    print('Diferencia entre resultados:')
-    print(prueba - resultadoCompu)
-    print(
-        '\n La prueba es exitosa si los valores de Diferencia entre resultados son muy chicos (comparables o inferiores al epsilon de maquina)\n')
-
-    # Indeterminado
-    A = np.array([[1, 2, 3], [4, 5, 6]])
-    b = np.array([[1], [2]])
-
-    print('Test 3 (Sistema Indeterminado por Dimensiones)')
-    print('A:\n', A)
-    print('b:\n', b)
-    print('Resultado de la funcion:')
-    try:
-        prueba = leastsq(A, b)
-    except ValueError:
-        print("Se detecto el error de Sistema Indeterminado")
-        print('\n Prueba exitosa\n')
-    else:
-        print("No se detecto el error de Sistema Indeterminado, la funcion retorna:")
-        print(prueba)
-        print('\n Prueba fallida\n')
-
-        # Incompatible
-    A = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-    b = np.array([[1], [2]])
-    print('Test 4 (Sistema Incompatible por Dimensiones)')
-    print('A:\n', A)
-    print('b:\n', b)
-    print('Resultado de la funcion:')
-    try:
-        prueba = leastsq(A, b)
-    except ValueError:
-        print("Se detecto el error de Sistema Incompatible")
-        print('\n Prueba exitosa\n')
-    else:
-        print("No se detecto el error de Sistema Incompatible, la funcion retorna:")
-        print(prueba)
-        print('\n Prueba fallida\n')
-    print('Fin del test')
-    return "Taran!"
-
-test()
