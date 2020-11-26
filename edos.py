@@ -150,23 +150,23 @@ def cauchy(f, x0, t0, tf, h):
 
 ########################################################################################################################
 # Implementación de ruku4
-# f: EDO. Si es de segundo orden, x'=x[0] y x=x[1]
+# edo: EDO. Si es de segundo orden, x'=x[0] y x=x[1]
 # t0: Inicio del intervalo de tiempo
 # tf: Fin del intervalo de tiempo
 # h: Paso
-# x0: Condiciones iniciales. IMPORTANTE: Si la EDO es de orden 2 x0[0]=x'(0) y x0[1]=x(0)
+# ci: Condiciones iniciales. IMPORTANTE: Si la EDO es de orden 2 x0[0]=x'(0) y x0[1]=x(0)
 # Devuelve arreglo con los valores de t y x que representan la función buscada
 # ----------------------------------------------------------------------------------------------------------------------
-def ruku4(f, t0, tf, h, x0):
+def ruku4(edo, t0, tf, h, ci):
   time = np.arange(t0, tf + h, h)
-  x = np.zeros((len(time), len(x0)))
-  x[0] = x0
-  fvec = np.zeros((4, len(x0)))
+  x = np.zeros((len(time), len(ci)))
+  x[0] = ci
+  fvec = np.zeros((4, len(ci)))
   for i, t in enumerate(time[:-1]):
-    fvec[0] = f(t, x[i])
-    fvec[1] = f(t + h / 2, x[i] + h * fvec[0] / 2)
-    fvec[2] = f(t + h / 2, x[i] + h * fvec[1] / 2)
-    fvec[3] = f(t + h, x[i] + h * fvec[2])
+    fvec[0] = edo(t, x[i])
+    fvec[1] = edo(t + h / 2, x[i] + h * fvec[0] / 2)
+    fvec[2] = edo(t + h / 2, x[i] + h * fvec[1] / 2)
+    fvec[3] = edo(t + h, x[i] + h * fvec[2])
     x[i + 1] = x[i] + h * (np.dot(np.array([1, 2, 2, 1]), fvec) / 6)
   return time, x
 ########################################################################################################################
@@ -176,14 +176,14 @@ def ruku4(f, t0, tf, h, x0):
 # EJEMPLO DE USO RUKU 4
 # Resuelve: x'' + 2(|x|-1)x' + x = 0 con las condiciones iniciales x(0)=1 y x'(0)=1
 # ----------------------------------------------------------------------------------------------------------------------
-'''def f(t, x):
+'''def edo(t, x):
     return np.array([- 2*(np.abs(x[1])**4-1)*x[0] - x[1], x[0]])
 
-ci = np.array([1.0, 1.0])
+x0 = np.array([1.0, 1.0])
 t0 = 0
 tf = 50
 h = 0.001
-t, x = ruku4(f, t0, tf, h, ci)
+t, x = ruku4(edo, t0, tf, h, x0)
 
 plt.plot(t, x[:, 1])
 plt.title("Función")
