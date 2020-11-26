@@ -5,15 +5,14 @@
 import numpy as np
 
 ########################################################################################################################
-# leastsq:
+# leastsqr:
 # Resuelve el problema de cuadrados mínimos usando descomposición QR (argmin||A.x-b||)
 # Recibe la matriz A y el vector b. Devuelve el vector x.
 # Requisitos: - Que la cantidad de filas de A sea mayor o igual a la de columnas
-#             - Que A sea de rango completo
+#             - Que A sea de rango completo (columnas o filas LI)
 #             - Que las dimensiones de A y b sean compatibles
-# En caso de que no se cumplan los requisitos devuelve -1
 # ----------------------------------------------------------------------------------------------------------------------
-def leastsq(A, b):
+def leastsqr(A, b):
 
     # Factorización QR
     QR = desc_qr(A)                                     # Realizo la descomposición QR
@@ -31,7 +30,7 @@ def leastsq(A, b):
 ########################################################################################################################
 # desc_qr:
 # Realiza la descomposición QR reducida usando Gram-Schmidt. Devuelve Q1 y R1
-# Asume que se cumplen los requisitos de leastsq
+# Asume que se cumplen los requisitos de leastsqr
 # ----------------------------------------------------------------------------------------------------------------------
 def desc_qr(A):
     m = A.shape[0]                                         # Defino las dimensiones m y n
