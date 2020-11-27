@@ -19,63 +19,53 @@ def leastdvs(A, b):
 
 ########################################################################################################################
 # dvs:
-# Descompones la matriz A y encuentra sus valores singulares
+# Descompones la matriz A (parcialmente) y encuentra sus valores singulares
 # ----------------------------------------------------------------------------------------------------------------------
 def dvs(A):
-    B = np.dot(A.T, A)
-    avas, aves = np.linalg.eig(B)               # Calculo autovalores y autovectores
-    lista = list(zip(avas, aves))               # Ordeno los avas en orden descendiente con sus aves correspondientes
-    lista.sort(key=lambda tup: tup[0], reverse=True)
-    vs = []
-    V = []
+    B = A.T@A
+    sigmas, V = np.linalg.eig(B)                # Calculo avas y aves
+    idx = sigmas.argsort()[::-1]                # Ordeno avas
+    sigmas = np.sqrt(sigmas[idx])               # Calculo sigmas ordenados
+    V = V[:, idx]                               # Ordeno aves
     U = []
     i = 0
-    while i < min(A.shape[0], A.shape[1]) and lista[i][0] > 0:      # Filtro avas negativos
-        vs.append(np.sqrt(lista[i][0]))                             # Calculo valores singulares
-        V.append(normalize(lista[i][1]))                            # Normalizo aves
-        U.append(normalize(np.dot(A, V[i]/vs[i])))                  # Calculo las primeras columnas de U
+    while i < len(sigmas) and sigmas[i] > 0:    # Filtro sigmas inválidos
+        U.append((A@np.atleast_2d(V[i]).T/sigmas[i]).flatten())         # Calculo U (parcialmente)
         i += 1
-
-    vs = np.array(vs)
-    V = np.transpose(np.array(V))
     U = np.transpose(np.array(U))
-    # S = np.diag(vs)
-
-    return vs, V, U
+    return sigmas, V, U
 ########################################################################################################################
 
 
 ########################################################################################################################
-# normalize:
-# Devuelve la versión normalizada del vector ingresado
+# svd_complete:
+# Descompone la matriz dada por sus valores singulares de forma completa
+# Devuele E, V y U en ese orden
 # ----------------------------------------------------------------------------------------------------------------------
-def normalize(v):
-    if np.linalg.norm(v) != 0:
-        v = v/np.linalg.norm(v)
-    return v
+def svd_complete(A):
+    B = A.T@A
+    sigmas, V = np.linalg.eig(B)
+    r = len(sigmas)
+    idx = sigmas.argsort()[::-1]
+    sigmas = np.sqrt(sigmas[idx])
+    V = V[:, idx]
+    U = np.zeros((np.shape(A)[0], np.shape(A)[0]))
+    for i, sigma in enumerate(sigmas):
+        U[:, i] = (A@np.atleast_2d(V[i]).T/sigma).flatten()
+    for i in range(r, np.shape(U)[0]):
+        U[:, i] = np.random.random((np.shape(U)[0], 1)).flatten()
+        for j in range(i):
+            U[:, i] -= (U[:, j]@U[:, i])*U[:, j]
+        U[:, i] = U[:, i]/np.linalg.norm(U[:, i])
+    E = np.append(np.diag(sigmas), np.zeros((np.shape(A)[0]-len(sigmas), len(sigmas))), axis=0)
+    return E, V, U
 ########################################################################################################################
-
 
 A = np.array([[1.02, 1], [1.01, 1], [0.94, 1], [0.99, 1]])
 b = np.array([2.05, 1.99, 2.02, 1.93])
 
-# print(np.dot(A.T, A))
-# print(np.linalg.eig(np.dot(A.T, A))[0])
-# print(np.linalg.eig(np.dot(A.T, A))[1])
-
-
-# print(dvs(A))
 print("Lo que da:", leastdvs(A, b))
 print("Lo que debería dar:", np.linalg.lstsq(A, b, None)[0])
 
-# vs = np.array([0, 1, 2, -3, 4, -5, -6, 7, 8])
-# vsp = []
-# for i in range(len(vs)):
-#     if vs[i] < 0:
-#         pass
-#     else:
-#         vsp.append(vs[i])
-#
-# print("vs:", vs)
-# print("vsp", vsp)
+
 
