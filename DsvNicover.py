@@ -1,5 +1,6 @@
 import numpy as np
-
+import pandas as pd
+import matplotlib.pyplot as plt
 def leastsq(A,b):
     a=1
 #V,E,U = dvs(A,b)
