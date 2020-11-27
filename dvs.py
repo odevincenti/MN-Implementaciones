@@ -3,6 +3,8 @@
 ########################################################################################################################
 
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 ########################################################################################################################
 # leastdvs:
@@ -13,7 +15,7 @@ def leastdvs(A, b):
     x = 0
     for i in range(len(vs)):
         x += ((U[:, i])@b)*(V[:, i]/vs[i])              # Hago sumatoria
-    return x
+    return np.array(x)
 ########################################################################################################################
 
 
@@ -61,11 +63,43 @@ def svd_complete(A):
     return E, V, U
 ########################################################################################################################
 
-A = np.array([[1.02, 1], [1.01, 1], [0.94, 1], [0.99, 1]])
+
+########################################################################################################################
+# EJEMPLO SIMPLE
+'''A = np.array([[1.02, 1], [1.01, 1], [0.94, 1], [0.99, 1]])
 b = np.array([2.05, 1.99, 2.02, 1.93])
 
 print("Lo que da:", leastdvs(A, b))
-print("Lo que debería dar:", np.linalg.lstsq(A, b, None)[0])
+print("Lo que debería dar:", np.linalg.lstsq(A, b, None)[0])'''
+########################################################################################################################
 
 
+########################################################################################################################
+# RESOLUCIÓN EJERCICIO DEL PARCIAL
+# Se tiene la función y = acos(x^2) + bsin(x) + c y los valores para x e y provistos por el archivo
+# ----------------------------------------------------------------------------------------------------------------------
+'''df = pd.read_csv("p43.csv")
+x = np.array(df["x"].tolist())
+y = np.array(df["y"].tolist())
+n = x.shape[0]
+fig, ax = plt.subplots()
+ax.plot(x, y, ".", label="puntos")
+ax.legend()
+
+A = np.zeros((x.size, 3))                   # Armo matriz A
+A[:, 0] = np.cos(np.sqrt(abs(x[:])))
+A[:, 1] = np.sin(np.sqrt(abs(x[:])))
+A[:, 2] = 1
+
+ya = leastdvs(A, y)                         # Busco coeficientes que mejor ajustan a la función
+print(ya)
+
+# Armo función de ajuste
+def f(x):
+    return ya[0]*np.cos(np.sqrt(abs(x))) + ya[1]*np.sin(np.sqrt(abs(x))) + ya[2]
+
+x = range(-50, 50)                          # Valores del eje x que toma el gráfico
+plt.plot(x, [f(i) for i in x])              # Grafico función ajustada
+plt.show()'''
+########################################################################################################################
 
