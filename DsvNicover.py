@@ -1,30 +1,22 @@
 import numpy as np
 
-def leastsq(A,b):
-    a=1
-#V,E,U = dvs(A,b)
 
-
-
-
-
-
-def dvs(A,b):
-    B=np.transpose(A) @ A
-    ava,V=np.linalg.eig(B)
-    E= np.zeros(np.shape(A))
+def dvs(A, b):
+    B = np.transpose(A) @ A
+    ava, V = np.linalg.eig(B)
+    E = np.zeros(np.shape(A))
     U = np.zeros(np.shape(A))
-    for i in range(len(U[:,0])):
+    for i in range(len(U[:, 0])):
         E[i, i] = np.sqrt(ava[i])
-        if ava[i]>0:
-            U[:,i]=A @ V[:,i]/ E[i,i]
+        if ava[i] > 0:
+            U[:, i] = A @ V[:, i]/E[i, i]
 
 
-
-def leastsqrtrucho(A,b):
-    Aspade= np.linalg.inv(np.transpose(A) @ A) @ np.transpose(A)
+def leastsqrtrucho(A, b):
+    Aspade = np.linalg.inv(np.transpose(A) @ A) @ np.transpose(A)
     x = Aspade @ b
     return x
+
 
 A = np.array([[1.02, 1], [1.01, 1], [0.94, 1], [0.99, 1]])
 b = np.array([2.05, 1.99, 2.02, 1.93])
