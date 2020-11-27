@@ -2,10 +2,8 @@
 # Ecuaciones diferenciales ordinarias
 # ----------------------------------------------------------------------------------------------------------------------
 
-
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 ########################################################################################################################
 # euler_nico:
@@ -173,10 +171,29 @@ def ruku4(edo, t0, tf, h, ci):
 
 
 ########################################################################################################################
+# find_T: Encuentra el pseudoperíodo de una onda estacionaria
+# y: Arreglo con las posiciones de la onda en función del tiempo
+# t0: Punto a partir del cual se puede considerar a la onda estacionaria (fin del transitorio)
+# h: Paso de t
+# ----------------------------------------------------------------------------------------------------------------------
+def find_T(y, t0, h):
+    max = []
+    for i in range(int(t0/h), len(y) - 1):
+        if y[i-1] < y[i] > y[i+1]:
+            max.append(i)
+    dif = np.zeros(len(max) - 1)
+    for i in range(len(max) - 1):
+        dif[i] = np.abs(max[i+1] - max[i])
+
+    return np.mean(dif)*h
+########################################################################################################################
+
+
+########################################################################################################################
 # EJEMPLO DE USO RUKU 4
 # Resuelve: x'' + 2(|x|-1)x' + x = 0 con las condiciones iniciales x(0)=1 y x'(0)=1
 # ----------------------------------------------------------------------------------------------------------------------
-'''def edo(t, x):
+def edo(t, x):
     return np.array([- 2*(np.abs(x[1])**4-1)*x[0] - x[1], x[0]])
 
 x0 = np.array([1.0, 1.0])
@@ -195,7 +212,10 @@ plt.plot(t, x[:, 0])
 plt.title("Derivada")
 plt.xlabel("t")
 plt.ylabel("x")
-plt.show()'''
+plt.show()
+
+print("Período:", find_T(x[:, 1], 3, h))
+
 ########################################################################################################################
 
 
