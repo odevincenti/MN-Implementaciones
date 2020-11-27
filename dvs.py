@@ -29,10 +29,11 @@ def dvs(A):
     idx = sigmas.argsort()[::-1]                # Ordeno avas
     sigmas = np.sqrt(sigmas[idx])               # Calculo sigmas ordenados
     V = V[:, idx]                               # Ordeno aves
+    V = np.transpose(np.array(V))
     U = []
     i = 0
     while i < len(sigmas) and sigmas[i] > 0:    # Filtro sigmas inválidos
-        U.append((A@np.atleast_2d(V[i]).T/sigmas[i]).flatten())         # Calculo U (parcialmente)
+        U.append((A@(V[i].T))/sigmas[i])        # Calculo U (parcialmente)
         i += 1
     U = np.transpose(np.array(U))
     return sigmas, V, U
@@ -92,14 +93,20 @@ A[:, 1] = np.sin(np.sqrt(abs(x[:])))
 A[:, 2] = 1
 
 ya = leastdvs(A, y)                         # Busco coeficientes que mejor ajustan a la función
-print(ya)
+print("Coeficientes:", ya)
+# yr = np.linalg.lstsq(A, y, None)[0]
+# print("Lo que debería dar:", yr)
 
 # Armo función de ajuste
 def f(x):
     return ya[0]*np.cos(np.sqrt(abs(x))) + ya[1]*np.sin(np.sqrt(abs(x))) + ya[2]
+    # return yr[0]*np.cos(np.sqrt(abs(x))) + yr[1]*np.sin(np.sqrt(abs(x))) + yr[2]
 
 x = range(-50, 50)                          # Valores del eje x que toma el gráfico
 plt.plot(x, [f(i) for i in x])              # Grafico función ajustada
 plt.show()'''
 ########################################################################################################################
+
+
+
 
