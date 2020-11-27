@@ -9,10 +9,10 @@ import numpy as np
 # Resuelve el problema de cuadrados mínimos usando descomposición por valores singulares
 # ----------------------------------------------------------------------------------------------------------------------
 def leastdvs(A, b):
-    vs, V, U = dvs(A)
+    vs, V, U = dvs(A)                                   # Obtengo la descomposición parcial
     x = 0
     for i in range(len(vs)):
-        x += ((U[:, i])@b)*(V[:, i]/vs[i])
+        x += ((U[:, i])@b)*(V[:, i]/vs[i])              # Hago sumatoria
     return x
 ########################################################################################################################
 
@@ -24,7 +24,7 @@ def leastdvs(A, b):
 def dvs(A):
     B = np.dot(A.T, A)
     avas, aves = np.linalg.eig(B)               # Calculo autovalores y autovectores
-    lista = list(zip(avas, aves))               # Ordeno los avas en orden descendiente y sus aves correspondientes
+    lista = list(zip(avas, aves))               # Ordeno los avas en orden descendiente con sus aves correspondientes
     lista.sort(key=lambda tup: tup[0], reverse=True)
     vs = []
     V = []
