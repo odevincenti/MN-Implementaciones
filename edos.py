@@ -215,7 +215,7 @@ t, x = ruku4(edo, t0, tf, h, x0)                            # Resuelvo el proble
 
 # Cálculo del error
 t_2, x_2 = ruku4(edo, t0, tf, h/2, x0)
-Error = np.abs(x2[4][1] - x1[2][1])/(2**n - 1)              # Calculo error
+Error = 2**n * np.abs(x_2[4][1] - x[2][1])/(2**n - 1)       # Calculo error con paso h
 print("Error:", Error)
 
 plt.plot(t, x[:, 1])                                        # Grafico función
