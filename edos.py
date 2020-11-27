@@ -193,29 +193,45 @@ def find_T(y, t0, h):
 # EJEMPLO DE USO RUKU 4
 # Resuelve: x'' + 2(|x|-1)x' + x = 0 con las condiciones iniciales x(0)=1 y x'(0)=1
 # ----------------------------------------------------------------------------------------------------------------------
-def edo(t, x):
+'''def edo(t, x):
     return np.array([- 2*(np.abs(x[1])**4-1)*x[0] - x[1], x[0]])
 
 x0 = np.array([1.0, 1.0])
 t0 = 0
 tf = 50
-h = 0.001
-t, x = ruku4(edo, t0, tf, h, x0)
+Emax = 1e-5
+n = 4
 
-plt.plot(t, x[:, 1])
+# Para estimar el paso, tengo que estimar c, tomo un h cualquiera (que converja)
+h1 = 0.1
+t1, x1 = ruku4(edo, t0, tf, h1, x0)
+t2, x2 = ruku4(edo, t0, tf, h1/2, x0)
+c = np.abs(x2[4][1] - x1[2][1])/((1-1/2**n)*h1**n)          # Estimo c
+print("c estimado:", c)
+h = np.power(Emax/c, 1/n)                                   # Estimo paso
+print("h estimado:", h)
+
+t, x = ruku4(edo, t0, tf, h, x0)                            # Resuelvo el problema
+
+# Cálculo del error
+t_2, x_2 = ruku4(edo, t0, tf, h/2, x0)
+Error = np.abs(x2[4][1] - x1[2][1])/(2**n - 1)              # Calculo error
+print("Error:", Error)
+
+plt.plot(t, x[:, 1])                                        # Grafico función
 plt.title("Función")
 plt.ylabel("x")
 plt.xlabel("t")
 plt.show()
 
-plt.plot(t, x[:, 0])
+plt.plot(t, x[:, 0])                                        # Grafico derivada
 plt.title("Derivada")
 plt.xlabel("t")
 plt.ylabel("x")
 plt.show()
 
-print("Período:", find_T(x[:, 1], 3, h))
-
+print("Período:", find_T(x[:, 1], 3, h))                    # Busco período
+'''
 ########################################################################################################################
 
 
