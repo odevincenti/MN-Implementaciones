@@ -99,8 +99,8 @@ print("Lo que debería dar:", yr)
 
 # Armo función de ajuste
 def f(x):
-    #return ya[0]*np.cos(np.sqrt(abs(x))) + ya[1]*np.sin(np.sqrt(abs(x))) + ya[2]
-    return yr[0]*np.cos(np.sqrt(abs(x))) + yr[1]*np.sin(np.sqrt(abs(x))) + yr[2]
+    return ya[0]*np.cos(np.sqrt(abs(x))) + ya[1]*np.sin(np.sqrt(abs(x))) + ya[2]
+    # return yr[0]*np.cos(np.sqrt(abs(x))) + yr[1]*np.sin(np.sqrt(abs(x))) + yr[2]
 
 x = range(-50, 50)                          # Valores del eje x que toma el gráfico
 plt.plot(x, [f(i) for i in x])              # Grafico función ajustada

@@ -1,7 +1,113 @@
+########################################################################################################################
+# Optimización
+########################################################################################################################
 
 import numpy as np
 import matplotlib.pyplot as plt
 from copy import copy
+
+########################################################################################################################
+# steepest_descent: Busca el mínimo de la función f utilizando el método de máximo descenso
+#   f: funcion a minimizar
+#   vf: gradiente de f
+#   xo: punto inicial del algoritmo
+#   max_i: Número máximo de iteraciones
+# ----------------------------------------------------------------------------------------------------------------------
+def steepest_descent(f, vf, xo, tol=np.finfo(float).eps, max_i=100):
+    x = xo
+    for k in range(max_i):
+        d = -vf(x)
+        if d.all() < tol:       # Si d = (0, 0, 0) terminamos
+            print(f"Se realizaron {k} iteraciones")
+            break
+        else:
+            if np.count_nonzero(d) > 0:
+                g = lambda alpha: f(x + alpha*d)
+                alpha_min = argmin(g, 0, 1)
+                x = x + alpha_min * d
+        # print(f'Iteración {k + 1}')
+        # print(f'd={d}')
+        # print(f'x{k+1}={x}\n')
+
+    return x
+########################################################################################################################
+
+
+########################################################################################################################
+# qNewton: Implementa el algoritmo de cuasi-Newton BFGS
+# Recibe: - f: Handle de la función a minimizar
+#         - vf: Handle del gradiente de la función
+#         - x0: Valor cercano al que minimiza la función
+#         - tol: Tolerancia
+#         - max_i: Número máximo de iteraciones
+# ----------------------------------------------------------------------------------------------------------------------
+def qNewton(f, vf, x0, tol=np.finfo(float).eps, max_i=100):
+    x_1 = x0
+    B = np.diag(np.full(vf(x0).shape, 0.1))             # Creo el B base
+    i = 0
+    fin = True
+
+    while i < max_i and fin:
+        x_0 = x_1                                       # Actualizo x
+        d = -np.dot(B, vf(x_0))                         # Calculo d
+        if np.linalg.norm(d) >= np.finfo(float).eps:
+            g = lambda alpha: f(x_0 + alpha * d)
+            a = argmin(g, 0, 1)                         # Calculo alfa que minimice f
+
+            x_1 = x_0 + a * d                           # Calculo nueva x
+
+            if np.linalg.norm(x_1 - x_0) >= tol and np.linalg.norm(d) >= np.finfo(float).eps:        # Me fijo si terminó
+                s = a * d
+                y = vf(x_1) - vf(x_0)
+                B += ((s.T@y + (y.T@B)@y) * (s@s.T)) / (s.T@y) ** 2 - ((B@y)@s.T + s@(y.T@B)) / (s.T@y)  # Aplico BFGS
+                i += 1
+                # print(f"iteración {i}: min = {x_1}")
+            else:
+                fin = False                             # Si terminó, salgo del loop
+        else:
+            fin = False
+
+    print(f"Se realizaron {i} iteraciones")
+
+    return x_1
+########################################################################################################################
+
+
+########################################################################################################################
+# argmin: Realiza la interpolación cuadrática de una función en R y encuentra el mínimo del polinomio
+# Recibe: - f: Handle de la función a minimizar
+#         - x: Punto de inicio de la minimización (Primer nodo)
+#         - h: Estimación de la distancia entre los nodos
+# Devuelve: Valor que minimiza el polinomio interpolador
+# ----------------------------------------------------------------------------------------------------------------------
+def argmin(f, x, h0):
+    falta = True
+    h = h0
+    ya = f(x)
+    yb = f(x + h)
+    yc = f(x + 2 * h)
+    while falta and h > 1e-10:                      # Se define h = 1e-10 como el menor h soportado
+        if ya > yb > yc:            # Si no encuentra un mínimo,
+            h = 2*h                 # Duplica el paso
+        elif ya < yb < yc:          # Si se pasa del mínimo,
+            h = h / 2               # Toma la mitad del paso
+        else:
+            falta = False           # Encontró un mínimo
+
+        ya = f(x)
+        yb = f(x + h)
+        yc = f(x + 2*h)
+
+    hmin = (4*yb - 3*ya - yc) / (4*yb - 2*ya - 2*yc) * h        # Calcula el mínimo del polinomio interpolador
+    return x + hmin
+########################################################################################################################
+
+
+# Ej 6
+print("Máximo descenso:", steepest_descent(lambda x: x**4, lambda x: 4*x**3, np.array([-2])))
+print("Cuasi Newton:", qNewton(lambda x: x**4, lambda x: 4*x**3, np.array([-2]), 1e-2))
+
+
 
 
 def nelder_mead_verbose(f, x_values, N):
@@ -67,7 +173,7 @@ def nelder_mead_verbose(f, x_values, N):
     polygons.append(x_values)
     return polygons
 
-
+'''
 def plot_triangles(triangles, title):
     colors = ['r', 'g', 'b', 'c', 'm', 'y']
     for k in range(len(triangles)):
@@ -95,7 +201,7 @@ x2 = [3, 3]
 triangles_ej7 = np.asarray(nelder_mead_verbose(g_ej7, [xo, x1, x2], N))
 plot_triangles(triangles_ej7, 'Triángulos en cada iteración')
 
-
+'''
 
 
 
