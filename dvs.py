@@ -79,7 +79,7 @@ print("Lo que debería dar:", np.linalg.lstsq(A, b, None)[0])'''
 # RESOLUCIÓN EJERCICIO DEL PARCIAL
 # Se tiene la función y = acos(x^2) + bsin(x) + c y los valores para x e y provistos por el archivo
 # ----------------------------------------------------------------------------------------------------------------------
-'''df = pd.read_csv("p43.csv")
+df = pd.read_csv("p53.csv")
 x = np.array(df["x"].tolist())
 y = np.array(df["y"].tolist())
 n = x.shape[0]
@@ -94,17 +94,17 @@ A[:, 2] = 1
 
 ya = leastdvs(A, y)                         # Busco coeficientes que mejor ajustan a la función
 print("Coeficientes:", ya)
-# yr = np.linalg.lstsq(A, y, None)[0]
-# print("Lo que debería dar:", yr)
+yr = np.linalg.lstsq(A, y, None)[0]
+print("Lo que debería dar:", yr)
 
 # Armo función de ajuste
 def f(x):
-    return ya[0]*np.cos(np.sqrt(abs(x))) + ya[1]*np.sin(np.sqrt(abs(x))) + ya[2]
-    # return yr[0]*np.cos(np.sqrt(abs(x))) + yr[1]*np.sin(np.sqrt(abs(x))) + yr[2]
+    #return ya[0]*np.cos(np.sqrt(abs(x))) + ya[1]*np.sin(np.sqrt(abs(x))) + ya[2]
+    return yr[0]*np.cos(np.sqrt(abs(x))) + yr[1]*np.sin(np.sqrt(abs(x))) + yr[2]
 
 x = range(-50, 50)                          # Valores del eje x que toma el gráfico
 plt.plot(x, [f(i) for i in x])              # Grafico función ajustada
-plt.show()'''
+plt.show()
 ########################################################################################################################
 
 
